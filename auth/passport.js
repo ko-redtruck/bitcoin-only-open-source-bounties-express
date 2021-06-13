@@ -2,24 +2,6 @@ const passport = require('passport');
 const postgres = require('../db');
 
 module.exports = function (app) {
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  passport.serializeUser(function(user, done) {
-   console.log(user);
-   done(null, user.id);
- });
-
- passport.deserializeUser(async function(id, done) {
-   try{
-     const res = await postgres.query(`SELECT * FROM UserData WHERE Users.id = $1`,[id])
-     done(null,res.rows[0]);
-   }
-   catch (err){
-     done(err,null);
-   }
- });
-
  async function authenticationFunction(provider_id,provider_name,url,name,done) {
    try{
      const res = await postgres.query(`SELECT Users.id, Users.provider_id, Users.provider_name, Users.created_on, Users.privilege_level, Identities.url, Identities.name as name FROM Users,Identities WHERE provider_id = $1 AND provider_name = $2 AND Users.identity_url = Identities.url`,[provider_id,provider_name]);
@@ -50,7 +32,6 @@ module.exports = function (app) {
      }
      else{
        console.log("logging in for user")
-        console.log(res.rows[0])
         return done(null,res.rows[0]);
      }
 

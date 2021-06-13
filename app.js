@@ -1,18 +1,62 @@
 const express = require('express');
+var session = require("express-session");
+var bodyParser = require("body-parser");
+
+var pgSession = require('connect-pg-simple')(session);
 const postgres = require("./db");
 
-var session = require("express-session"),
-  bodyParser = require("body-parser");
 const passport = require('passport');
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000;
+
+app.set('views', './views');
+app.set('view engine', 'ejs');
+
+app.use(express.static('public'));
+
+/*
+app.use(session({
+  store: new pgSession({
+    pgPromise : postgres          // Connection client
+  }),
+  secret: "taproot",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    secure : false // only for dev
+   }
+}));
+*/
+app.use(session({ secret: "cats" }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+ console.log("serializing user:",user.id,user);
+ done(null, user.id);
+});
+
+passport.deserializeUser(async function(id, done) {
+ try{
+   const res = await postgres.query(`SELECT * FROM Users,Identities WHERE Users.id = $1 AND Users.identity_url=Identities.url`,[id]);
+   console.log("deserializeUser:",res.rows[0].id);
+   done(null,res.rows[0]);
+ }
+ catch (err){
+   console.log("ERROR deserializeUser",err);
+   done(err,null);
+ }
+
+});
 
 require("./auth/passport.js")(app);
 
 app.get('/', (req, res) => {
   console.log("user: ",req.user);
-  res.send('Hello World!')
+  res.render("index",{username : req.user ? req.user.name: "no user"});
 })
 
 app.listen(port, () => {
@@ -49,13 +93,11 @@ app.post("/post/bounty",requireAuth, async (req,res) => {
     [res1.rows[0],req.user.id,req.body.identity_url,req.body.amount,new Date(),false,req.body.announchment_link,req.body.condition_text]);
     await client.query("COMMIT");
     res.sendStatus(200);
-  )
+  }
   catch(err){
     await client.query("ROLLBACK");
     console.log(err);
     res.sendStatus(400);
-  }
-
   }
 });
 
