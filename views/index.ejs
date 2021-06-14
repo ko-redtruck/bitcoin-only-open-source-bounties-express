@@ -1,3 +1,27 @@
+<head>
+      <%- include('./components/head'); %>
+</head>
+
 <h1>Hello</h1>
 <p> <%= username %>
 <a href="/auth/github">Login</a>
+
+<h2>Post issue</h2>
+<form class="" action="/post/issue" method="post">
+  <input type="text" name="title" placeholder="title">
+  <input type="text" name="link" placeholder="link">
+  <input type="text" name="description" placeholder=""="Describe the issue">
+  <button type="submit" value="Submit" name="button">Submit</button>
+</form>
+
+<h2>Post bounty</h2>
+<form class="" action="/post/issue" method="post">
+  <input type="number" name="issue_id" placeholder="issue_id">
+  <input type="text" name="identity_url" placeholder="identity_url">
+  <input type="text" name="title" placeholder="title">
+  <input type="text" name="link" placeholder="link">
+  <input type="text" name="description" placeholder=""="Describe the issue">
+  <button type="submit" value="Submit" name="button">Submit</button>
+</form>
+
+<a href="/post/bounty">Create bounty</a>

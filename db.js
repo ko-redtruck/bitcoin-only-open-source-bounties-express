@@ -36,17 +36,16 @@ async function setup() {
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES Users(id),
     created_on TIMESTAMP NOT NULL,
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL UNIQUE,
     link VARCHAR(128),
-    description TEXT,
-    UNIQUE(title)
+    description TEXT
   )`)
 
   await client.query(`CREATE TABLE IF NOT EXISTS Bounties(
     issue_id INTEGER NOT NULL REFERENCES Issues(id),
     user_id INTEGER NOT NULL REFERENCES Users(id),
     identity_url VARCHAR(128) NOT NULL REFERENCES Identities(url),
-    amount INT NOT NULL,
+    amount INTEGER NOT NULL,
     created_on TIMESTAMP NOT NULL,
     funding_secured BOOLEAN DEFAULT false,
     announchment_link VARCHAR(128),

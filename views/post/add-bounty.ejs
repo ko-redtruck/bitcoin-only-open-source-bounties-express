@@ -1,0 +1,50 @@
+<head>
+      <%- include('../components/head'); %>
+</head>
+
+<div class="section">
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <form class="" action="/post/issue" method="post">
+
+          <div class="field">
+            <label class="label">Amount (sats)</label>
+            <div class="control">
+              <input class="input" type="number" name="amount" value="1000000">
+            </div>
+          </div>
+
+
+          <div class="field">
+            <label class="label">Announchment link</label>
+            <div class="control">
+              <input class="input" type="text" name="announchment_link" placeholder="Link to GitHub or Twitter post">
+            </div>
+          </div>
+
+          <p>If the bounty is not from you, add the person's name and link their main online presence.</p>
+          <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+              <input class="input" type="text" name="bounty_payer_name" placeholder="Their name">
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Website</label>
+            <div class="control">
+              <input class="input" type="text" name="bounty_payer_url" placeholder="Link to their GitHub, Twitter, Blog, ...">
+            </div>
+          </div>
+          <div class="field">
+            <div class="control">
+              <button class="button is-link" type="submit" value="Submit" name="button">Submit</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
