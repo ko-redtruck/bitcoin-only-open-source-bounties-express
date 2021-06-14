@@ -90,7 +90,6 @@ app.post("/post/issue",requireAuth,async (req,res) => {
 });
 
 app.post("/post/bounty", async (req,res) => {
-  console.log("not logged in","identity_url",parseInt(req.body.amount),new Date(),false,req.body.announchment_link,req.body.condition_text,null);
   try{
     prepareFormInputs(req);
     await postgres.query("BEGIN");
@@ -108,14 +107,9 @@ app.post("/post/bounty", async (req,res) => {
     else{
       identity_url = req.user.url;
     }
-    console.log("got idenity ulr",identity_url);
     const res1 = await postgres.query(`INSERT INTO Issues(user_id,created_on,title,link,description) VALUES($1,$2,$3,$4,$5) RETURNING *`,[req.user.id,new Date(),req.body.title,req.body.link,req.body.description]);
-    console.log("inserted into issues");
-    console.log("amount:",parseInt(req.body.amount));
     await postgres.query(`INSERT INTO Bounties(issue_id,user_id,identity_url,amount,created_on,funding_secured,announchment_link,condition_text,payed_out_to) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
     [res1.rows[0].id,req.user.id,identity_url,parseInt(req.body.amount),new Date(),false,req.body.announchment_link,req.body.condition_text,null]);
-
-    console.log("inserted into issues");
     await postgres.query("COMMIT");
     res.sendStatus(200);
   }
@@ -127,9 +121,32 @@ app.post("/post/bounty", async (req,res) => {
 });
 
 app.post("/post/bounty/add", requireAuth, async (req,res) =>{
-  await postgres.query(`INSERT INTO Bounties VALUES($1,$2,$,3,$4,$5,$6,$7,$8)`,
-  [req.body.issue_id,req.user.id,req.body.identity_url,req.body.amount,new Date(),false,req.body.announchment_link,req.body.condition_text]);
+  prepareFormInputs(req);
+  try{
+    await postgres.query("BEGIN");
+    let identity_url;
+    if(req.body.bounty_payer_url != null && req.body.bounty_payer_name != null){
+      req.body.bounty_payer_url = req.body.bounty_payer_url.replace("https://","").replace("http://","");
+      identity_url = req.body.bounty_payer_url;
+      const res0 = await postgres.query("SELECT * FROM Identities WHERE url=$1",[req.body.bounty_payer_url]);
+      if(res0.rows.length == 0){
+        await postgres.query("INSERT INTO Identities VALUES($1,$2)",[req.body.bounty_payer_url,req.body.bounty_payer_name]);
+      }
+    }
+    else{
+      identity_url = req.user.url;
+    }
 
+    await postgres.query(`INSERT INTO Bounties VALUES($1,$2,$,3,$4,$5,$6,$7,$8,$9)`,
+    [req.body.issue_id,req.user.id,identity_url,parseInt(req.body.amount),new Date(),false,req.body.announchment_link,req.body.condition_text,null]);
+    await postgres.query("COMMIT");
+    res.sendStatus(200);
+  }
+  catch(err){
+    await postgres.query("ROLLBACK");
+    console.log(err);
+    res.sendStatus(400);
+  }
 });
 function requireAuth(req,res,next) {
   if(req.user){
