@@ -15,10 +15,9 @@ async function setup() {
   //await client.query(`DROP TABLE Identities; DROP TABLE Users; DROP TABLE Bounties; DROP TABLE Issues; DROP TABLE Votes; DROP TABLE Comments;`)
 
   await client.query(` CREATE TABLE IF NOT EXISTS Identities(
-      url VARCHAR(128),
-      name VARCHAR(64),
-      PRIMARY KEY(url),
-      UNIQUE(name)
+      id SERIAL PRIMARY KEY,
+      url VARCHAR(128) UNIQUE,
+      name VARCHAR(64) UNIQUE
   )`)
 
   await client.query(` CREATE TABLE IF NOT EXISTS Users(
@@ -26,7 +25,7 @@ async function setup() {
     provider_id VARCHAR(128),
     provider_name VARCHAR(32),
     created_on TIMESTAMP NOT NULL,
-    identity_url VARCHAR(128) REFERENCES Identities(url),
+    identity_id INTEGER REFERENCES Identities(id),
     privilege_level INT DEFAULT 0,
     UNIQUE(provider_id,provider_name)
   )
@@ -37,21 +36,21 @@ async function setup() {
     user_id INTEGER NOT NULL REFERENCES Users(id),
     created_on TIMESTAMP NOT NULL,
     title VARCHAR(100) NOT NULL UNIQUE,
-    link VARCHAR(128),
+    link VARCHAR(128) UNIQUE,
+    condition_text TEXT NOT NULL,
     description TEXT
   )`)
 
   await client.query(`CREATE TABLE IF NOT EXISTS Bounties(
     issue_id INTEGER NOT NULL REFERENCES Issues(id),
     user_id INTEGER NOT NULL REFERENCES Users(id),
-    identity_url VARCHAR(128) NOT NULL REFERENCES Identities(url),
+    identity_id INTEGER NOT NULL REFERENCES Identities(id),
     amount INTEGER NOT NULL,
     created_on TIMESTAMP NOT NULL,
     funding_secured BOOLEAN DEFAULT false,
     announchment_link VARCHAR(128),
-    condition_text TEXT,
-    payed_out_to VARCHAR(128) REFERENCES Identities(url),
-    PRIMARY KEY(issue_id,user_id,identity_url)
+    payed_out_to INTEGER REFERENCES Identities(id),
+    PRIMARY KEY(issue_id,identity_id)
   )
 `)
 
