@@ -1,0 +1,51 @@
+<head>
+      <%- include('../components/head'); %>
+</head>
+
+<header style="padding-bottom:2.5rem;">
+  <%- include('../components/header',{user:user}) %>
+
+</header>
+<section class="hero is-fullheight-with-navbar has-text-centered">
+    <div class="hero-body">
+      <div class="container" style="max-width:22rem;">
+
+            <div class="field">
+              <div class="control">
+                <a  class="button is-dark is-medium is-fullwidth" href="/auth/github">
+                  <span>Login with Github</span>
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                  </a>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <a  class="button is-info is-medium is-fullwidth" href="" disabled>
+                  <span>Login with Twitter</span>
+                  <span class="icon">
+                      <i class="fab fa-twitter"></i>
+                    </span>
+                  </a>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <a  class="button is-medium is-black is-fullwidth" href="/auth/lnurl-auth" disabled>
+                  <span>Login with LN-Auth</span>
+                  <span class="icon">
+                      <i class="fas fa-bolt"></i>
+                    </span>
+                  </a>
+              </div>
+            </div>
+            <br>
+            <h2 class="subtitle">For sign up or login</h2>
+
+
+
+
+      </div>
+  </section>

@@ -2,9 +2,12 @@
       <%- include('./components/head'); %>
 </head>
 
-<h1>Hello</h1>
-<p> <%= username %>
-<a href="/auth/github">Login</a>
+<header style="padding-bottom:2.5rem;">
+  <%- include('./components/header',{user:user}) %>
+
+</header>
+
+
 
 <!--
 <h2>Post issue</h2>
@@ -25,9 +28,8 @@
   <button type="submit" value="Submit" name="button">Submit</button>
 </form>
 -->
-<a href="/post/bounty">Create bounty</a>
 
-<div class="section">
+<div class="section ">
     <div class="container">
 
       <div class="columns">
@@ -39,10 +41,10 @@
                 <h1 class="title"><%= issue.title %></h1>
                 <div class="tags">
                   <span class="tag is-success">
-                  bounty: <%= issue.total_bounty_amount %> sats
+                  bounty: <%= issue.total_bounty_amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') %> sats
                   </span>
                   <span class="tag is-dark">
-                   <%= issue.created_on %>
+                   <%= issue.created_on.toLocaleDateString("en-US") %>
                   </span>
                   <span class="tag is-link">
                   <%= issue.name %>

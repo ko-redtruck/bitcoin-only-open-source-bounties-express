@@ -2,6 +2,10 @@
       <%- include('./components/head'); %>
 </head>
 
+<header style="padding-bottom:2.5rem;">
+  <%- include('./components/header',{user:user}) %>
+
+</header>
 <section class="section">
      <div class="container">
        <div class="columns">
@@ -10,11 +14,8 @@
              <div class="content">
                <h1 class="title"><%= bounty.title %></h1>
                <div class="tags">
-                 <span class="tag is-success">
-                 bounty: <%= bounty.total_bounty_amount %> sats
-                 </span>
                  <span class="tag is-dark">
-                  <%= bounty.created_on %>
+                  <%= bounty.created_on.toLocaleDateString("en-US") %>
                  </span>
                  <span class="tag is-link">
                  <%= bounty.name %>
@@ -23,82 +24,52 @@
 
 
                <hr>
+               <p><a href="https://<%= bounty.link %>"><%= bounty.link %></a></p>
+
                <p><%= bounty.description %></p>
                <h3 class="subtitle">Bounty payout conditions</h3>
                <p><%= bounty.condition_text %></p>
              </div>
            </div>
           </div>
-        </div>
-        <% bounties.forEach(function(bounty){ %>
+          <div class="column is-4">
+            <nav class="panel">
+              <p class="panel-heading">
+                Bounties
+              </p>
 
-        <div class="columns">
-          <div class="column">
-            <div class="box">
-              <div class="content">
-                <span class="tag is-link">
-                <%= bounty.identity_name %>
+              <% bounties.forEach(function(bounty){ %>
+
+              <a class="panel-block" <% if(bounty.announchment_link){ %>
+                  href="https://<%= bounty.announchment_link %>"
+                <% } else{ %>
+                    href="https://<%= bounty.identity_url %>"
+                  <% } %>
+                >
+                <span class="panel-icon">
+                  <i class="fab fa-bitcoin" aria-hidden="true"></i>
                 </span>
-                <span class="tag is-success">
-                bounty: <%= bounty.amount %> sats
-                </span>
-                <a href="<%= bounty.announchment_link %>"></a>
+                <% console.log(bounty) %>
+                <%= bounty.amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') %> sats  <span class="has-text-link has-text-weight-semibold"style="padding:0.5rem;"> <%= bounty.identity_name %></span>
+              </a>
+              <% }); %>
+              <div class="panel-block">
+                <a href="/post/bounty/add?id=<%=bounty.id%>" class="button is-link is-outlined is-fullwidth">Add bounty</a>
 
               </div>
 
-            </div>
-
+            </nav>
           </div>
-
         </div>
-        <% }); %>
-        <div class="columns">
-          <div class="column">
-            <form class="form" action="/post/bounty/add" method="post">
-
-              <input type="hidden" name="issue_id" value="<%= bounty.id %>">
-              <div class="field">
-                <label class="label">Amount (sats)</label>
-                <div class="control">
-                  <input class="input" type="number" name="amount" value="1000000">
-                </div>
-              </div>
-
-
-              <div class="field">
-                <label class="label">Announchment link</label>
-                <div class="control">
-                  <input class="input" type="text" name="announchment_link" placeholder="Link to GitHub or Twitter post">
-                </div>
-              </div>
-
-              <p>If the bounty is not from you, add the person's name and link their main online presence.</p>
-              <div class="field">
-                <label class="label">Name</label>
-                <div class="control">
-                  <input class="input" type="text" name="bounty_payer_name" placeholder="Their name">
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Website</label>
-                <div class="control">
-                  <input class="input" type="text" name="bounty_payer_url" placeholder="Link to their GitHub, Twitter, Blog, ...">
-                </div>
-              </div>
 
 
 
-              <div class="field">
-                <div class="control">
-                  <button class="button is-link" type="submit" value="Submit" name="button">Submit</button>
-                </div>
-
-              </div>
-            </form>
-
-          </div>
-
-        </div>
 
       </div>
 </section>
+
+<script type="text/javascript">
+  function formatNumber(num) {
+  return num.
+}
+</script>

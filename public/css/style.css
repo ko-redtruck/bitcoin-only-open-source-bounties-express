@@ -1,4 +1,13 @@
-.body{
-  background: '#f3f3f3';
+body{
+  background: #f7f9fb;
   min-height: 100vH;
 }
+
+.fa-bitcoin{
+  color : orange;
+}
+
+.panel{
+  background-color: white;
+}
+$primary: hex(545863);

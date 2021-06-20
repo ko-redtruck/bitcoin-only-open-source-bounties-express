@@ -7,7 +7,7 @@ const postgres = require("./db");
 
 const passport = require('passport');
 var frontend = require('./routers/frontend');
-
+const requireAuth = require("./routers/auth").requireAuth;
 const app = express()
 const port = process.env.PORT || 3000;
 
@@ -17,10 +17,10 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 
-/*
+
 app.use(session({
   store: new pgSession({
-    pgPromise : postgres          // Connection postgres
+    pool : postgres          // Connection postgres
   }),
   secret: "taproot",
   resave: false,
@@ -30,8 +30,8 @@ app.use(session({
     secure : false // only for dev
    }
 }));
-*/
-app.use(session({ secret: "cats" }));
+
+//app.use(session({ secret: "cats" }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -60,7 +60,7 @@ app.use("/",frontend);
 app.get('/', async(req, res) => {
   console.log("user: ",req.user);
   const res1 = await postgres.query(`
-    SELECT Issues.*, Bounty.total_bounty_amount, Users.id, Identities.url, Identities.name
+    SELECT Issues.*, Bounty.total_bounty_amount, Users.id as user_id, Identities.url, Identities.name
     FROM Issues, Users, Identities, (SELECT Issues.id, SUM(Bounties.amount) as total_bounty_amount
       FROM Bounties,Issues
       WHERE Bounties.issue_id = Issues.id
@@ -72,7 +72,7 @@ app.get('/', async(req, res) => {
     `);
 
 
-  res.render("index",{issues: res1.rows,username : req.user ? req.user.name: "no user"});
+  res.render("index",{issues: res1.rows, user: req.user,username : req.user ? req.user.name: "no user"});
 })
 
 app.get("/bounties/:issue_id", async(req,res)=>{
@@ -91,16 +91,19 @@ app.get("/bounties/:issue_id", async(req,res)=>{
 
   const issueData = res1.rows[0];
   const res2 = await postgres.query(`
-    SELECT Bounties.*,I_A.name as identity_name, I_B.name, I_B.url
+    SELECT Bounties.*,I_A.name as identity_name, I_A.url as identity_url, I_B.name, I_B.url
     FROM Bounties,Users,Identities I_A, Identities I_B
     WHERE Bounties.issue_id = $1
     AND Bounties.identity_id = I_A.id
     AND Bounties.user_id = Users.id
     AND Users.identity_id = I_B.id
+    ORDER BY Bounties.amount DESC
     `,[issueData.id]);
   const bounties = res2.rows;
-  res.render("bounty",{bounty: issueData,bounties: bounties});
+  res.render("bounty",{bounty: issueData,bounties: bounties, user: req.user});
 });
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
@@ -116,6 +119,10 @@ app.get('/auth/github/callback',
     res.redirect('/');
   });
 
+app.get('/auth/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+  });
 app.post("/post/issue",requireAuth,async (req,res) => {
   try{
     prepareFormInputs(req);
@@ -140,7 +147,7 @@ app.post("/post/bounty", async (req,res) => {
       req.body.bounty_payer_url = req.body.bounty_payer_url.replace("https://","").replace("http://","");
       const res0 = await postgres.query("SELECT * FROM Identities WHERE url=$1",[req.body.bounty_payer_url]);
       if(res0.rows.length == 0){
-        const res01 = await postgres.query("INSERT INTO Identities VALUES($1,$2) RETURNING *",[req.body.bounty_payer_url,req.body.bounty_payer_name]);
+        const res01 = await postgres.query("INSERT INTO Identities(url,name) VALUES($1,$2) RETURNING *",[req.body.bounty_payer_url,req.body.bounty_payer_name]);
         identity_id = res01.rows[0].id;
       }
       else{
@@ -154,7 +161,7 @@ app.post("/post/bounty", async (req,res) => {
     await postgres.query(`INSERT INTO Bounties(issue_id,user_id,identity_id,amount,created_on,funding_secured,announchment_link,payed_out_to) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
     [res1.rows[0].id,req.user.id,identity_id,parseInt(req.body.amount),new Date(),false,req.body.announchment_link,null]);
     await postgres.query("COMMIT");
-    res.sendStatus(200);
+    res.redirect("/bounties/"+res1.rows[0].id);
   }
   catch(err){
     await postgres.query("ROLLBACK");
@@ -190,7 +197,7 @@ app.post("/post/bounty/add", requireAuth, async (req,res) =>{
     await postgres.query(`INSERT INTO Bounties VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
     [req.body.issue_id,req.user.id,identity_id,parseInt(req.body.amount),new Date(),false,req.body.announchment_link,null]);
     await postgres.query("COMMIT");
-    res.sendStatus(200);
+    res.redirect("/bounties/"+req.body.issue_id);
   }
   catch(err){
     await postgres.query("ROLLBACK");
@@ -198,12 +205,7 @@ app.post("/post/bounty/add", requireAuth, async (req,res) =>{
     res.sendStatus(400);
   }
 });
-function requireAuth(req,res,next) {
-  if(req.user){
-    return next();
-  }
-  return res.redirect("/login");
-}
+
 
 //if req.body[key] == '' --> req.body[key] = null;
 function prepareFormInputs(req) {
@@ -211,5 +213,12 @@ function prepareFormInputs(req) {
     if(req.body[key] === ''){
       req.body[key] = null;
     }
+    else{
+      req.body[key] = removeUrlProtocols(req.body[key])
+    }
   });
+}
+
+function removeUrlProtocols(url) {
+  return url.replace(/(^\w+:|^)\/\//, '');
 }
