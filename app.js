@@ -17,7 +17,9 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 
-
+console.log(process.env.NODE_ENV,process.env.NODE_ENV == 'production');
+console.log(process.env.GITHUB_CLIENT_ID,process.env.GITHUB_CLIENT_SECRET)
+console.log(process.env.GITHUB_CALLBACK_URL)
 app.use(session({
   store: new pgSession({
     pool : postgres          // Connection postgres
@@ -27,7 +29,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    secure : false // only for dev
+    secure : process.env.NODE_ENV == 'production' ? true : false  // only for dev
    }
 }));
 
