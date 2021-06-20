@@ -17,9 +17,11 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 
-console.log(process.env.NODE_ENV,process.env.NODE_ENV == 'production');
-console.log(process.env.GITHUB_CLIENT_ID,process.env.GITHUB_CLIENT_SECRET)
-console.log(process.env.GITHUB_CALLBACK_URL)
+
+if(process.env.NODE_ENV == 'production'){
+  console.log("running in production node behind 1 proxy")
+  app.set('trust proxy', 1);
+}
 app.use(session({
   store: new pgSession({
     pool : postgres          // Connection postgres

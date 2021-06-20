@@ -10,4 +10,13 @@ body{
 .panel{
   background-color: white;
 }
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: 3rem !important;
+}
+
 $primary: hex(545863);
