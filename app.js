@@ -39,14 +39,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
- console.log("serializing user:",user.id,user);
  done(null, user.id);
 });
 
 passport.deserializeUser(async function(id, done) {
  try{
    const res = await postgres.query(`SELECT Users.*,Identities.url,Identities.name FROM Users,Identities WHERE Users.id = $1 AND Users.identity_id=Identities.id`,[id]);
-   console.log("deserializeUser:",res.rows[0].id);
    done(null,res.rows[0]);
  }
  catch (err){

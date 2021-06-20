@@ -9,8 +9,18 @@ module.exports = function (app) {
      if(res.rows.length == 0){
        try{
          await postgres.query("BEGIN");
-         const res1 = await postgres.query("INSERT INTO Identities(url,name) VALUES($1,$2) ON CONFLICT (url) DO NOTHING RETURNING *",[url,name]);
-         const res2 = await postgres.query(" INSERT INTO Users(provider_id,provider_name,created_on,identity_id) VALUES($1,$2,$3,$4) RETURNING *",[provider_id,provider_name,new Date(),res1.rows[0].id])
+         
+         let identity_id;
+         let res1;
+         res1 = await postgres.query("SELECT * FROM Identities WHERE url=$1",[url]);
+         if(res1.rows.length == 0){
+           res1 = await postgres.query("INSERT INTO Identities(url,name) VALUES($1,$2) ON CONFLICT (url) DO NOTHING RETURNING *",[url,name]);
+           identity_id = res1.rows[0].id;
+         }
+         else{
+           identity_id = res1.rows[0].id;
+         }
+         const res2 = await postgres.query(" INSERT INTO Users(provider_id,provider_name,created_on,identity_id) VALUES($1,$2,$3,$4) RETURNING *",[provider_id,provider_name,new Date(),identity_id])
          await postgres.query("COMMIT");
 
          console.log("Signing up new user: ",url);

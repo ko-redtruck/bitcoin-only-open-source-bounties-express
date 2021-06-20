@@ -89,7 +89,7 @@ WITH (OIDS=FALSE);`)
       `)
     */
 
-    
+
   //VIEWS
   /*
   await client.query(`CREATE VIEWUserData AS
