@@ -19,55 +19,35 @@
             <div class="control">
               <input class="input" type="text" name="title"placeholder="title">
             </div>
+              <p class="help">Required! Please choose an unique title.</p>
           </div>
           <div class="field">
             <label class="label">Link</label>
             <div class="control">
               <input class="input" type="text" name="link" placeholder="Link to GitHub or Twitter post">
             </div>
+            <p class="help">Required! Link to a new unique issue or Tweet.</p>
           </div>
           <div class="field">
             <label class="label">Description</label>
             <div class="control">
               <textarea class="textarea" type="text" name="description" placeholder="Describe the issue/features you want"></textarea>
             </div>
+            <p class="help">Required!</p>
+
           </div>
           <div class="field">
             <label class="label">Conditions</label>
             <div class="control">
               <textarea class="textarea" type="text" name="condition_text" placeholder="Specify when this bounty is paid out"></textarea>
             </div>
+            <p class="help">Required!</p>
+
           </div>
           <h2 class="title">Bounty</h2>
 
-          <div class="field">
-            <label class="label">Amount (sats)</label>
-            <div class="control">
-              <input class="input" type="number" name="amount" value="1000000">
-            </div>
-          </div>
+          <%- include('../components/bounty-form') %>
 
-
-          <div class="field">
-            <label class="label">Announchment link</label>
-            <div class="control">
-              <input class="input" type="text" name="announchment_link" placeholder="Link to GitHub or Twitter post">
-            </div>
-          </div>
-
-          <p>If the bounty is not from you, add the person's name and link their main online presence.</p>
-          <div class="field">
-            <label class="label">Name</label>
-            <div class="control">
-              <input class="input" type="text" name="bounty_payer_name" placeholder="Their name">
-            </div>
-          </div>
-          <div class="field">
-            <label class="label">Website</label>
-            <div class="control">
-              <input class="input" type="text" name="bounty_payer_url" placeholder="Link to their GitHub, Twitter, Blog, ...">
-            </div>
-          </div>
 
 
 

@@ -26,7 +26,7 @@ app.use(session({
   store: new pgSession({
     pool : postgres          // Connection postgres
   }),
-  secret: "taproot",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -68,12 +68,12 @@ app.get('/', async(req, res) => {
       WHERE Bounties.issue_id = Issues.id
       GROUP BY Issues.id) AS Bounty
     WHERE Issues.id = Bounty.id
-    AND Users.id = Identities.id
+    AND Users.identity_id = Identities.id
     AND Issues.user_id = Users.id
     ORDER BY total_bounty_amount DESC
     `);
 
-
+  console.log(res1.rows);
   res.render("index",{issues: res1.rows, user: req.user,username : req.user ? req.user.name: "no user"});
 })
 

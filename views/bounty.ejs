@@ -29,6 +29,8 @@
                <p><%= bounty.description %></p>
                <h3 class="subtitle">Bounty payout conditions</h3>
                <p><%= bounty.condition_text %></p>
+               <p class="help"><span class="icon"><i class="fas fa-info-circle"></i></span>Contact the bounty issuers to request payment when you finish the task.</p>
+
              </div>
            </div>
           </div>
@@ -53,10 +55,13 @@
                 <%= bounty.amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') %> sats  <span class="has-text-link has-text-weight-semibold"style="padding:0.5rem;"> <%= bounty.identity_name %></span>
               </a>
               <% }); %>
-              <div class="panel-block">
+
+              <div class="panel-block is-flex-direction-column is-justify-content-left">
                 <a href="/post/bounty/add?id=<%=bounty.id%>" class="button is-link is-outlined is-fullwidth">Add bounty</a>
+                <p class="help">  <span class="icon"><i class="fas fa-info-circle"></i></span>No payment required until the task is completed.</p>
 
               </div>
+
 
             </nav>
           </div>
