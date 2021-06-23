@@ -1,0 +1,106 @@
+<head>
+      <%- include('./components/head'); %>
+</head>
+
+<header style="padding-bottom:2.5rem;">
+  <%- include('./components/header',{user:user}) %>
+
+</header>
+
+
+
+<!--
+<h2>Post issue</h2>
+<form class="" action="/post/issue" method="post">
+  <input type="text" name="title" placeholder="title">
+  <input type="text" name="link" placeholder="link">
+  <input type="text" name="description" placeholder=""="Describe the issue">
+  <button type="submit" value="Submit" name="button">Submit</button>
+</form>
+
+<h2>Post bounty</h2>
+<form class="" action="/post/issue" method="post">
+  <input type="number" name="issue_id" placeholder="issue_id">
+  <input type="text" name="identity_url" placeholder="identity_url">
+  <input type="text" name="title" placeholder="title">
+  <input type="text" name="link" placeholder="link">
+  <input type="text" name="description" placeholder=""="Describe the issue">
+  <button type="submit" value="Submit" name="button">Submit</button>
+</form>
+-->
+
+<div class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <!-- Any other Bulma elements you want -->
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<div class="section ">
+    <div class="container">
+
+      <div class="columns">
+        <div class="column">
+
+
+          <% issues.forEach(function(issue){ %>
+            <div class="box">
+              <a href="<%= issue.html_url %>">
+              <div class="content">
+                <h1 class="title"><%= issue.title %></h1>
+                <div class="tags">
+                  <% issue.labels.forEach(function(label) { %>
+                    <span class="tag" style="background-color:#<%= label.color %>">
+                      <%= label.name %>
+                    </span>
+                    <% }) %>
+
+                  <span class="tag is-dark">
+                   <%= issue.created_at %>
+                  </span>
+                  <span class="tag is-info">
+                   <%= issue.comments %> <%= issue.comments == 1 ? 'comment' : 'comments' %>
+                  </span>
+                </div>
+                <div class="pt-3">
+                  <a href="/post/bounty/add?id" class="button is-link is-outlined">Add bounty</a>
+                  <a href="<%= issue.html_url %>" class="button is-info is-outlined">Open on GitHub</a>
+
+                  <p class="help">  <span class="icon"><i class="fas fa-info-circle"></i></span>No payment required until the task is completed.</p>
+
+                </div>
+              </div>
+              </a>
+
+            </div>
+          <% }); %>
+        </div>
+      </div>
+      <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" href="<%- pag.path + '?page=' + pag.previous %>" >Previous</a>
+        <a class="pagination-next" href="<%- pag.path + '?page=' + pag.next %>">Next page</a>
+        <ul class="pagination-list">
+          <li>
+            <a class="pagination-link" href="<%= pag.path %>" hrefaria-label="Goto page 1">1</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    document.querySelector('a#open-modal').addEventListener('click', function(event) {
+      event.preventDefault();
+      var modal = document.querySelector('.modal');  // assuming you have only 1
+      var html = document.querySelector('html');
+      modal.classList.add('is-active');
+      html.classList.add('is-clipped');
+
+      modal.querySelector('.modal-background').addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.classList.remove('is-active');
+        html.classList.remove('is-clipped');
+      });
+    });
+  </script>

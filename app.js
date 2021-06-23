@@ -7,6 +7,8 @@ const postgres = require("./db");
 
 const passport = require('passport');
 var frontend = require('./routers/frontend');
+var githubIssues = require('./routers/github-issues');
+
 const requireAuth = require("./routers/auth").requireAuth;
 const app = express()
 const port = process.env.PORT || 3000;
@@ -58,6 +60,7 @@ passport.deserializeUser(async function(id, done) {
 require("./auth/passport.js")(app);
 
 app.use("/",frontend);
+app.use("/",githubIssues);
 
 app.get('/', async(req, res) => {
   console.log("user: ",req.user);
