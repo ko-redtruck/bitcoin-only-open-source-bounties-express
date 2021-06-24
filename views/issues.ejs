@@ -43,6 +43,12 @@
       <div class="columns">
         <div class="column">
 
+          <div class="pb-5">
+            <a href="https://github.com/<%= owner %>/<%= repo %>">
+              <h1 class="title has-text-info"><span class="icon"><i class="fab fa-github"></i></span> <%= owner %>/<%= repo %></h1>
+            </a>
+          </div>
+
 
           <% issues.forEach(function(issue){ %>
             <div class="box">
@@ -64,7 +70,7 @@
                   </span>
                 </div>
                 <div class="pt-3">
-                  <a href="/post/bounty/add?id" class="button is-link is-outlined">Add bounty</a>
+                  <a href="/issues/add-bounty?owner=<%= owner %>&repo=<%= repo %>&id=<%= issue.number %>" class="button is-link is-outlined">Add bounty</a>
                   <a href="<%= issue.html_url %>" class="button is-info is-outlined">Open on GitHub</a>
 
                   <p class="help">  <span class="icon"><i class="fas fa-info-circle"></i></span>No payment required until the task is completed.</p>

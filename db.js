@@ -35,8 +35,8 @@ async function setup() {
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES Users(id),
     created_on TIMESTAMP NOT NULL,
-    title VARCHAR(100) NOT NULL UNIQUE,
-    link VARCHAR(128) UNIQUE,
+    title VARCHAR(256) NOT NULL UNIQUE,
+    link VARCHAR(128),
     condition_text TEXT NOT NULL,
     description TEXT
   )`)

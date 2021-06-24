@@ -11,6 +11,10 @@ body{
   background-color: white;
 }
 
+.invisible-box{
+  display: block;
+  padding: 1.25rem;
+}
 footer {
   position: fixed;
   left: 0;

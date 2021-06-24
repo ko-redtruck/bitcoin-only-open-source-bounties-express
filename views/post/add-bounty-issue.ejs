@@ -1,0 +1,77 @@
+<head>
+      <%- include('../components/head'); %>
+</head>
+
+<header style="padding-bottom:2.5rem;">
+  <%- include('../components/header',{user:user}) %>
+
+</header>
+<div class="section">
+  <div class="container">
+
+
+
+    <div class="columns">
+      <div class="column" >
+        <div class="invisible-box">
+          <form class="form" action="<%= form_url %>" method="post">
+
+
+            <input type="hidden" name="issue_id" value="<%= db_issue_id %>">
+            <input class="input" type="hidden" name="title" value="<%= issue.title %>">
+            <input type="hidden" name="link" value="<%= issue.html_url %>">
+            <input type="hidden" name="description" value="<%= issue.body %>">
+            <input type="hidden" name="condition_text" value="The bounty will be paid when the issue is closed and code merged. The bounty is split between the code contributors.">
+
+            <%- include('../components/bounty-form') %>
+
+
+
+            <div class="field">
+              <div class="control">
+                <button class="button is-link" type="submit" value="Submit" name="button">Submit</button>
+              </div>
+              <p class="help"><span class="icon"><i class="fas fa-info-circle"></i></span>The bounty has to paid when the issue is closed and code merged. Split the bounty between the code contributors</p>
+
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+
+     <div class="columns">
+        <div class="column">
+          <div class="box">
+            <div class="content">
+              <p class="help is-size-6"><span class="icon"><i class="fas fa-info-circle"></i></span>Adding bounty to this issue</p>
+
+              <h1 class="title"> <%= issue.title %></h1>
+              <div class="tags">
+                  <% issue.labels.forEach(function(label) { %>
+                  <span class="tag" style="background-color:#<%= label.color %>">
+                    <%= label.name %>
+                  </span>
+                  <% }) %>
+                  <span class="tag is-dark">
+                   <%= issue.created_at %>
+                  </span>
+                  <span class="tag is-info">
+                   <%= issue.comments %> <%= issue.comments == 1 ? 'comment' : 'comments' %>
+                  </span>
+              </div>
+
+
+              <hr>
+              <p><%= issue.body %></p>
+            </div>
+          </div>
+         </div>
+        </div>
+
+  </div>
+</div>
+
+<%- include('../components/tracking') %>
